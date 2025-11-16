@@ -13,7 +13,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     # Locate and process the robot description (URDF/Xacro)
-    pkg_path = os.path.join(get_package_share_directory('buMRC_teleop_control'))
+    pkg_path = os.path.join(get_package_share_directory('teleop_control'))
     xacro_file = os.path.join(pkg_path, 'description', 'robot.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
 

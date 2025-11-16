@@ -17,7 +17,7 @@ def generate_launch_description():
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
     # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
 
-    package_name='buMRC_teleop_control' 
+    package_name='teleop_control' 
 
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
@@ -36,7 +36,7 @@ def generate_launch_description():
     # Run the spawner node from the ros_gz_sim package. The entity name doesn't really matter if you only have a single robot.
     spawn_entity = Node(package='ros_gz_sim', executable='create',
                         arguments=['-topic', 'robot_description',
-                                   '-name', 'buMRC_teleop_control',
+                                   '-name', 'teleop_control',
                                    '-z', '0.1'],
                         output='screen')
 
@@ -50,11 +50,22 @@ def generate_launch_description():
 
 
     xacro_file = os.path.join(
-                    get_package_share_directory('buMRC_teleop_control'),
+                    get_package_share_directory('my_bot'),
                     'description',
                     'robot.urdf.xacro'
                     )
     robot_description_config = xacro.process_file(xacro_file).toxml()
+
+    
+ #   controller_manager_node = Node(
+#        package='controller_manager', 
+ #       executable='ros2_control_node',
+  #      parameters=[
+   #                 {'robot_description': robot_description_config},
+    #                os.path.join(get_package_share_directory('my_bot'), 'config', 'my_controllers.yaml')
+#        ],
+  #      output='screen'
+ #   )
     
     load_joint_state_broadcaster = Node(
         package='controller_manager',
@@ -70,7 +81,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    teleop_config = os.path.join(get_package_share_directory('buMRC_teleop_control'), 'config', 'ps4_teleop.yaml')
+    teleop_config = os.path.join(get_package_share_directory('teleop_control'), 'config', 'ps4_teleop.yaml')
 
     joy_node = Node(
             package='joy',
@@ -82,7 +93,7 @@ def generate_launch_description():
     joy_teleop = Node(
             package='teleop_twist_joy',
             executable='teleop_node',
-            name='teleop_twist_joy_node', 
+            name='teleop_twist_joy_node', #may need to change to teleop_twist_joy_node
             parameters=[teleop_config],
             output='screen',
     )
@@ -96,6 +107,7 @@ def generate_launch_description():
     world_arg,
     spawn_entity,
     bridge,
+    #controller_manager_node,
     joy_teleop,
     ])
 
